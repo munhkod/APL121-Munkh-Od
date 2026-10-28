@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value="Tsahilgaany tulbur"/>
+        <attribute name="authors" value="odko"/>
+        <attribute name="about" value="APL121 BD1 - Sedev 4: Tsahilgaany tulbur"/>
+        <attribute name="saved" value="2026-10-28 12:00:00 PM"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <comment text="Orolt: gishuudiin too, neg hunii hereglee, ahmad nastan"/>
+            <declare name="residents" type="Integer" array="False" size=""/>
+            <declare name="perPerson" type="Real" array="False" size=""/>
+            <declare name="elder" type="Integer" array="False" size=""/>
+            <declare name="month" type="Integer" array="False" size=""/>
+            <declare name="coef" type="Real" array="False" size=""/>
+            <declare name="kwh" type="Real" array="False" size=""/>
+            <declare name="bill" type="Real" array="False" size=""/>
+            <declare name="tier" type="String" array="False" size=""/>
+            <declare name="totalKwh" type="Real" array="False" size=""/>
+            <declare name="totalBill" type="Real" array="False" size=""/>
+            <declare name="maxKwh" type="Real" array="False" size=""/>
+            <declare name="maxBill" type="Real" array="False" size=""/>
+            <declare name="maxMonth" type="Integer" array="False" size=""/>
+            <assign variable="totalKwh" expression="0"/>
+            <assign variable="totalBill" expression="0"/>
+            <assign variable="maxKwh" expression="-1"/>
+            <assign variable="maxBill" expression="0"/>
+            <assign variable="maxMonth" expression="0"/>
+            <output expression="&quot;=== TSAHILGAANY TULBUR TOOTSOOLUUR ===&quot;" newline="True"/>
+            <comment text="Orolt shalgalt (do-while)"/>
+            <do expression="residents &lt; 1 || residents &gt; 20">
+                <output expression="&quot;Ger buliin gishuudiin too (1-20): &quot;" newline="False"/>
+                <input variable="residents"/>
+                <if expression="residents &lt; 1 || residents &gt; 20">
+                    <then>
+                        <output expression="&quot;Aldaa! 1-20 hoorond too oruulna uu.&quot;" newline="True"/>
+                    </then>
+                    <else/>
+                </if>
+            </do>
+            <do expression="perPerson &lt;= 0 || perPerson &gt; 500">
+                <output expression="&quot;Neg hunii sariin dundaj hereglee, kVt.ts (0-500): &quot;" newline="False"/>
+                <input variable="perPerson"/>
+                <if expression="perPerson &lt;= 0 || perPerson &gt; 500">
+                    <then>
+                        <output expression="&quot;Aldaa! 0-ees ih, 500-aas baga too oruulna uu.&quot;" newline="True"/>
+                    </then>
+                    <else/>
+                </if>
+            </do>
+            <do expression="elder != 0 &amp;&amp; elder != 1">
+                <output expression="&quot;Ahmad nastan baigaa yu? (1 - tiim, 0 - ugui): &quot;" newline="False"/>
+                <input variable="elder"/>
+                <if expression="elder != 0 &amp;&amp; elder != 1">
+                    <then>
+                        <output expression="&quot;Aldaa! Zuvhun 0 esvel 1 oruulna uu.&quot;" newline="True"/>
+                    </then>
+                    <else/>
+                </if>
+            </do>
+            <comment text="12 sariin khusnegt"/>
+            <output expression="&quot;Sar | kVt.ts | Shatlal | Tulbur(tug)&quot;" newline="True"/>
+            <output expression="&quot;-------------------------------------------&quot;" newline="True"/>
+            <for variable="month" start="1" end="12" direction="inc" step="1">
+                <comment text="Uliraliin koeffitsient: uvul ih, zun baga"/>
+                <if expression="month == 12 || month == 1">
+                    <then>
+                        <assign variable="coef" expression="1.5"/>
+                    </then>
+                    <else>
+                        <if expression="month == 2">
+                            <then>
+                                <assign variable="coef" expression="1.4"/>
+                            </then>
+                            <else>
+                                <if expression="month == 11">
+                                    <then>
+                                        <assign variable="coef" expression="1.3"/>
+                                    </then>
+                                    <else>
+                                        <if expression="month == 3 || month == 10">
+                                            <then>
+                                                <assign variable="coef" expression="1.2"/>
+                                            </then>
+                                            <else>
+                                                <if expression="month == 4 || month == 9">
+                                                    <then>
+                                                        <assign variable="coef" expression="1.0"/>
+                                                    </then>
+                                                    <else>
+                                                        <if expression="month == 5 || month == 8">
+                                                            <then>
+                                                                <assign variable="coef" expression="0.8"/>
+                                                            </then>
+                                                            <else>
+                                                                <assign variable="coef" expression="0.7"/>
+                                                            </else>
+                                                        </if>
+                                                    </else>
+                                                </if>
+                                            </else>
+                                        </if>
+                                    </else>
+                                </if>
+                            </else>
+                        </if>
+                    </else>
+                </if>
+                <assign variable="kwh" expression="residents * perPerson * coef"/>
+                <assign variable="bill" expression="CalcBill(kwh, elder)"/>
+                <if expression="kwh &lt;= 150">
+                    <then>
+                        <assign variable="tier" expression="&quot;1-Hemnelt&quot;"/>
+                    </then>
+                    <else>
+                        <if expression="kwh &lt;= 300">
+                            <then>
+                                <assign variable="tier" expression="&quot;2-Dundaj&quot;"/>
+                            </then>
+                            <else>
+                                <assign variable="tier" expression="&quot;3-Undur&quot;"/>
+                            </else>
+                        </if>
+                    </else>
+                </if>
+                <output expression="month &amp; &quot; | &quot; &amp; ToFixed(kwh, 2) &amp; &quot; | &quot; &amp; tier &amp; &quot; | &quot; &amp; ToFixed(bill, 2)" newline="True"/>
+                <assign variable="totalKwh" expression="totalKwh + kwh"/>
+                <assign variable="totalBill" expression="totalBill + bill"/>
+                <comment text="Khailt: hamgiin ih zartsuulsan sar"/>
+                <if expression="kwh &gt; maxKwh">
+                    <then>
+                        <assign variable="maxKwh" expression="kwh"/>
+                        <assign variable="maxBill" expression="bill"/>
+                        <assign variable="maxMonth" expression="month"/>
+                    </then>
+                    <else/>
+                </if>
+            </for>
+            <output expression="&quot;-------------------------------------------&quot;" newline="True"/>
+            <output expression="&quot;Niit | &quot; &amp; ToFixed(totalKwh, 2) &amp; &quot; | | &quot; &amp; ToFixed(totalBill, 2)" newline="True"/>
+            <output expression="&quot;Sariin dundaj tulbur: &quot; &amp; ToFixed(totalBill / 12, 2) &amp; &quot; tug&quot;" newline="True"/>
+            <output expression="&quot;Hamgiin ih zartsuulsan sar: &quot; &amp; maxMonth &amp; &quot;-r sar (&quot; &amp; ToFixed(maxKwh, 2) &amp; &quot; kVt.ts, &quot; &amp; ToFixed(maxBill, 2) &amp; &quot; tug)&quot;" newline="True"/>
+            <call expression="PrintAdvice(maxKwh)"/>
+        </body>
+    </function>
+    <function name="CalcBill" type="Real" variable="bill">
+        <parameters>
+            <parameter name="kwh" type="Real" array="False"/>
+            <parameter name="elder" type="Integer" array="False"/>
+        </parameters>
+        <body>
+            <declare name="bill" type="Real" array="False" size=""/>
+            <comment text="Shatlaltai tarif: 150 / 200 / 280 tug"/>
+            <if expression="kwh &lt;= 150">
+                <then>
+                    <assign variable="bill" expression="kwh * 150"/>
+                </then>
+                <else>
+                    <if expression="kwh &lt;= 300">
+                        <then>
+                            <assign variable="bill" expression="150 * 150 + (kwh - 150) * 200"/>
+                        </then>
+                        <else>
+                            <assign variable="bill" expression="150 * 150 + (300 - 150) * 200 + (kwh - 300) * 280"/>
+                        </else>
+                    </if>
+                </else>
+            </if>
+            <assign variable="bill" expression="bill + 2000"/>
+            <comment text="Ahmad nastan BA 200 kVt.ts-aas baga bol 10% hungulult"/>
+            <if expression="elder == 1 &amp;&amp; kwh &lt;= 200">
+                <then>
+                    <assign variable="bill" expression="bill * 0.9"/>
+                </then>
+                <else/>
+            </if>
+        </body>
+    </function>
+    <function name="PrintAdvice" type="None" variable="">
+        <parameters>
+            <parameter name="maxKwh" type="Real" array="False"/>
+        </parameters>
+        <body>
+            <if expression="maxKwh &gt; 300">
+                <then>
+                    <output expression="&quot;Zovlomj: 3-r shatlald orson baina! Tsahilgaan khalaagchaa tsagaar untraaj, LED gerel ashiglaarai.&quot;" newline="True"/>
+                </then>
+                <else>
+                    <if expression="maxKwh &gt; 150">
+                        <then>
+                            <output expression="&quot;Zovlomj: 2-r shatlald orson baina. Hereggui ued tonogloloo zalguuraas salgaarai.&quot;" newline="True"/>
+                        </then>
+                        <else>
+                            <output expression="&quot;Zovlomj: Mash hemnelttei! Ene dadlaa hadgalaarai.&quot;" newline="True"/>
+                        </else>
+                    </if>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>
